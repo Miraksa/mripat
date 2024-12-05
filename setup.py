@@ -23,6 +23,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'computer_vision = mripat.computerVision:main',
             'object_detection = mripat.objectDetection:main',
             'test_camera = mripat.testCam:main',
             'record_camera = mripat.recordCam:main'
