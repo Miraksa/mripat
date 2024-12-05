@@ -6,6 +6,7 @@ from vision_msgs.msg import BoundingBox2DArray
 from vision_msgs.msg import Pose2D
 from vision_msgs.msg import Point2D
 from cv_bridge import CvBridge
+import cv2
 import time
 from ultralytics import YOLO
 
@@ -13,7 +14,7 @@ class ObjectDetection(Node):
     def __init__(self):
         super().__init__('object_detection')
         self.publisher_ = self.create_publisher(BoundingBox2DArray, '/detected_objects', 10)
-        self.subscriber_ = self.create_subscription(Image, '/camera', self.image_callback, 10)
+        self.subscriber_ = self.create_subscription(Image, '/vehicle/cropped_image', self.image_callback, 10)
         self.bridge = CvBridge()
         self.model = YOLO('/home/ambatron/Developer/ws_fighter/src/mripat/model/uav_4000dts.pt')
 
@@ -24,6 +25,7 @@ class ObjectDetection(Node):
 
     def image_callback(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+        # cv2.imshow("Frame", frame)
         try:
             start = time.time()
 
