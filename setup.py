@@ -26,7 +26,8 @@ setup(
             'computer_vision = mripat.computerVision:main',
             'object_detection = mripat.objectDetection:main',
             'test_camera = mripat.testCam:main',
-            'record_camera = mripat.recordCam:main'
+            'record_camera = mripat.recordCam:main',
+            'camera = mripat.camera:main'
         ],
     },
 )

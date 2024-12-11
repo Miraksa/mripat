@@ -1,10 +1,9 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
-from vision_msgs.msg import BoundingBox2D
-from vision_msgs.msg import BoundingBox2DArray
-from vision_msgs.msg import Pose2D
-from vision_msgs.msg import Point2D
+from vision_msgs.msg import BoundingBox2D, BoundingBox2DArray, Pose2D, Point2D
+from std_msgs.msg import Float32
+
 from cv_bridge import CvBridge
 import time
 from ultralytics import YOLO
@@ -12,10 +11,11 @@ from ultralytics import YOLO
 class ObjectDetection(Node):
     def __init__(self):
         super().__init__('object_detection')
-        self.publisher_ = self.create_publisher(BoundingBox2DArray, '/detected_objects', 10)
-        self.subscriber_ = self.create_subscription(Image, '/camera', self.image_callback, 10)
+        self.detection_publisher_ = self.create_publisher(BoundingBox2DArray, '/detection/objects', 10)
+        self.fps_publisher_ = self.create_publisher(Float32, '/detection/fps', 10)
+        self.image_subscriber_ = self.create_subscription(Image, '/camera', self.image_callback, 10)
         self.bridge = CvBridge()
-        self.model = YOLO('/home/ambatron/Developer/ws_fighter/src/mripat/model/uav_4000dts.pt')
+        self.model = YOLO('/home/ambatron/Developer/ws_miraksa/src/mripat/model/best.pt')
 
         self.fps = 0
         self.frame_count = 0
@@ -27,7 +27,7 @@ class ObjectDetection(Node):
         try:
             start = time.time()
 
-            results = self.model.predict(source=frame, save=False, save_txt=False, conf=0.5, verbose=False)
+            results = self.model.predict(source=frame, save=False, save_txt=False, conf=0.4, verbose=False)
             boxes = results[0].boxes
             confidences = boxes.conf
             class_ids = boxes.cls.int()
@@ -52,14 +52,18 @@ class ObjectDetection(Node):
                 # Append to array
                 bounding_boxes.boxes.append(bbox)
 
-            self.publisher_.publish(bounding_boxes)
+            self.detection_publisher_.publish(bounding_boxes)
             end = time.time()
             self.frame_count += 1
             self.fps = 1 / (end - start)
             self.total_fps += self.fps
             self.avg_fps = self.total_fps / self.frame_count
 
+            fps = Float32()
+            fps.data = self.fps
+
             self.get_logger().info(f"FPS: {int(self.fps)}")
+            self.fps_publisher_.publish(fps)
 
         except Exception as e:
             self.get_logger().error(f'Error during object detection: {e}')
