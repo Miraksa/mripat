@@ -15,7 +15,7 @@ class ObjectDetection(Node):
         self.fps_publisher_ = self.create_publisher(Float32, '/detection/fps', 10)
         self.image_subscriber_ = self.create_subscription(Image, '/camera', self.image_callback, 10)
         self.bridge = CvBridge()
-        self.model = YOLO('/home/ambatron/Developer/ws_miraksa/src/mripat/model/best.pt')
+        self.model = YOLO('/home/ambatron/Developer/ws_miraksa/src/mripat/model/uav_4000dts.pt')
 
         self.fps = 0
         self.frame_count = 0

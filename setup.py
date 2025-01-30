@@ -12,7 +12,9 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*')))
+        (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*'))),
+        (os.path.join('share', package_name, 'param'), glob(os.path.join('param', '*.yaml'))),
+        (os.path.join('share', package_name, 'model'), glob(os.path.join('model', '*.pt')))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,7 +27,6 @@ setup(
         'console_scripts': [
             'computer_vision = mripat.computerVision:main',
             'object_detection = mripat.objectDetection:main',
-            'test_camera = mripat.testCam:main',
             'record_camera = mripat.recordCam:main',
             'camera = mripat.camera:main'
         ],

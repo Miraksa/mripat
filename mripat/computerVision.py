@@ -17,7 +17,6 @@ class ComputerVision(Node):
         self.target_frame_location_publisher_ = self.create_publisher(Pose2D, '/target_frame_location', 10)
 
         self.bridge = CvBridge()
-        self.detections = []
         self.detection_fps = 0
 
         self.fps = 0
